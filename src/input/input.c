@@ -25,7 +25,6 @@ void* input(gpointer user_data) {
   user_click** clicks = (user_click**)malloc(sizeof(user_click*) * quantity);
   XEvent event;
   GtkWidget* combo_box = GTK_WIDGET(user_data);
-
   unsigned int id =
       get_winid(gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box)));
   while (len_now < quantity) {
@@ -37,21 +36,18 @@ void* input(gpointer user_data) {
       record_key_press(display, &event, id, clicks, &len_now, quantity);
     }
   }
-
-  // Записать в бинарный файл
   save_event(clicks, quantity);
   if (clicks) {
     for (size_t i = 0; i < quantity; i++)
       if (clicks[i]) free(clicks[i]);
     free(clicks);
   }
-
   XDestroyWindow(display, window);
   XCloseDisplay(display);
   return NULL;
 }
 
-void record_mouse_click(Display* display, XEvent* event, unsigned int id,
+void record_mouse_click(Display* dsp, XEvent* event, unsigned int id,
                         user_click** clicks, size_t* len_now, size_t quantity) {
   if (*len_now < quantity) {
     user_click* temp = (user_click*)malloc(sizeof(user_click));
@@ -65,7 +61,7 @@ void record_mouse_click(Display* display, XEvent* event, unsigned int id,
   }
 }
 
-void record_key_press(Display* display, XEvent* event, unsigned int id,
+void record_key_press(Display* dsp, XEvent* event, unsigned int id,
                       user_click** clicks, size_t* len_now, size_t quantity) {
   if (*len_now < quantity) {
     user_click* temp = (user_click*)malloc(sizeof(user_click));
